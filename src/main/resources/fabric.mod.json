@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "net.iantheone.jukeboxmod.JukeboxMod"
+    ],
+    "client": [
+      "net.iantheone.jukeboxmod.JukeboxClientMod"
     ]
   },
   "mixins": [

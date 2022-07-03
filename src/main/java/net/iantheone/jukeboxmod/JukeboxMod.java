@@ -1,6 +1,7 @@
 package net.iantheone.jukeboxmod;
 
 import net.fabricmc.api.ModInitializer;
+import net.iantheone.jukeboxmod.block.entity.BlockEntities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ public class JukeboxMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		Blocks.registerBlocks();
+		BlockEntities.registerAllBlockEntities();
 
 		Items.registerItems();
 

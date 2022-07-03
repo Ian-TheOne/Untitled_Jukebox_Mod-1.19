@@ -1,17 +1,25 @@
 package net.iantheone.jukeboxmod.block;
 
+import net.iantheone.jukeboxmod.block.entity.BigJukeboxEntity;
+import net.iantheone.jukeboxmod.block.entity.BlockEntities;
 import net.minecraft.block.*;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
+import net.minecraft.util.*;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
@@ -22,8 +30,9 @@ import net.minecraft.world.WorldAccess;
 import javax.annotation.Nullable;
 
 
-public class BigJukeboxBlock extends Block {
+public class BigJukeboxBlock extends BlockWithEntity implements BlockEntityProvider {
     public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
+    public static final BooleanProperty HAS_DISCS = BooleanProperty.of("has_discs");
     public static final DirectionProperty FACING = DirectionProperty.of("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
 
     protected static final VoxelShape TOP_FORWARD = Block.createCuboidShape(0, 0, 2, 16, 8, 14);
@@ -36,10 +45,10 @@ public class BigJukeboxBlock extends Block {
     //constructor stuff
     public BigJukeboxBlock(Settings settings) {
         super(settings);
-        setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH).with(HALF, DoubleBlockHalf.LOWER));
+        setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH).with(HALF, DoubleBlockHalf.LOWER).with(HAS_DISCS, false));
     }
 
-    //collision/outline shape
+    //collisionshape
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView view, BlockPos pos, ShapeContext context) {
         var facing = state.get(FACING);
@@ -70,10 +79,10 @@ public class BigJukeboxBlock extends Block {
         var doubleBlockHalf = state.get(HALF);
         var bigJukebox = net.iantheone.jukeboxmod.block.Blocks.BIG_JUKEBOX;
 
-        var dir = (doubleBlockHalf == DoubleBlockHalf.LOWER ? Direction.UP : Direction.DOWN);
-        var oppositeHalf = (doubleBlockHalf == DoubleBlockHalf.LOWER ? DoubleBlockHalf.UPPER: DoubleBlockHalf.LOWER);
+        var dir = (doubleBlockHalf == DoubleBlockHalf.LOWER) ? Direction.UP : Direction.DOWN;
+        var oppositeHalf = (doubleBlockHalf == DoubleBlockHalf.LOWER) ? DoubleBlockHalf.UPPER: DoubleBlockHalf.LOWER;
 
-        if (direction == dir && (!neighborState.isOf(bigJukebox)) || neighborState.get(HALF) != oppositeHalf) {
+        if (direction == dir && ((!neighborState.isOf(bigJukebox)) || neighborState.get(HALF) != oppositeHalf)) {
             return Blocks.AIR.getDefaultState();
         }
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
@@ -96,7 +105,20 @@ public class BigJukeboxBlock extends Block {
     }
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(HALF, FACING);
+        builder.add(HALF, FACING, HAS_DISCS);
+    }
+
+    //BLOCK ENTITY//
+
+    @Override
+    public BlockRenderType getRenderType(BlockState state){
+        return BlockRenderType.MODEL;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new BigJukeboxEntity(pos, state);
     }
 }
 
