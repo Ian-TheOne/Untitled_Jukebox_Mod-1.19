@@ -1,28 +1,28 @@
 package net.iantheone.jukeboxmod.block;
 
-import net.iantheone.jukeboxmod.block.entity.BigJukeboxEntity;
-import net.iantheone.jukeboxmod.block.entity.BlockEntities;
 import net.minecraft.block.*;
+import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.enums.DoubleBlockHalf;
+import net.iantheone.jukeboxmod.block.entity.BigJukeboxEntity;
+
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
+
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.item.ItemPlacementContext;
+
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
+
 import net.minecraft.util.*;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
+
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
@@ -31,9 +31,11 @@ import javax.annotation.Nullable;
 
 
 public class BigJukeboxBlock extends BlockWithEntity implements BlockEntityProvider {
-    public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
-    public static final BooleanProperty HAS_DISCS = BooleanProperty.of("has_discs");
-    public static final DirectionProperty FACING = DirectionProperty.of("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
+
+    public static final EnumProperty<DoubleBlockHalf>   HALF = Properties.DOUBLE_BLOCK_HALF;
+    public static final BooleanProperty                 HAS_DISCS = BooleanProperty.of("has_discs");
+    public static final BooleanProperty                 POWERED = BooleanProperty.of("powered");
+    public static final DirectionProperty               FACING = DirectionProperty.of("facing", Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST);
 
     protected static final VoxelShape TOP_FORWARD = Block.createCuboidShape(0, 0, 2, 16, 8, 14);
     protected static final VoxelShape BOTTOM_FORWARD = Block.createCuboidShape(0, 0, 2, 16, 16, 14);
@@ -45,7 +47,11 @@ public class BigJukeboxBlock extends BlockWithEntity implements BlockEntityProvi
     //constructor stuff
     public BigJukeboxBlock(Settings settings) {
         super(settings);
-        setDefaultState(this.getStateManager().getDefaultState().with(FACING, Direction.NORTH).with(HALF, DoubleBlockHalf.LOWER).with(HAS_DISCS, false));
+        setDefaultState(this.getStateManager().getDefaultState()
+                .with(FACING, Direction.NORTH)
+                .with(HALF, DoubleBlockHalf.LOWER)
+                .with(HAS_DISCS, false)
+                .with(POWERED, false));
     }
 
     //collisionshape
@@ -56,7 +62,7 @@ public class BigJukeboxBlock extends BlockWithEntity implements BlockEntityProvi
         
         if (facing == Direction.NORTH || facing == Direction.SOUTH) {
             return (half == DoubleBlockHalf.LOWER) ? BOTTOM_FORWARD : TOP_FORWARD;
-        } else {
+        }else{
             return (half == DoubleBlockHalf.LOWER) ? BOTTOM_SIDEWAYS : TOP_SIDEWAYS;
         }
     }
@@ -68,8 +74,12 @@ public class BigJukeboxBlock extends BlockWithEntity implements BlockEntityProvi
 
         if (!world.getBlockState(pos.up()).getMaterial().blocksMovement()){
             world.breakBlock(pos.up(), true);
-            world.setBlockState(pos.up(), bigJukebox.getDefaultState().with(HALF, DoubleBlockHalf.UPPER));
-            world.setBlockState(pos.up(), world.getBlockState(pos.up()).with(FACING, world.getBlockState(pos).get(FACING)));
+
+            world.setBlockState(pos.up(), bigJukebox.getDefaultState()
+                    .with(HALF, DoubleBlockHalf.UPPER));
+
+            world.setBlockState(pos.up(), world.getBlockState(pos.up())
+                    .with(FACING, world.getBlockState(pos).get(FACING)));
         }
     }
 
@@ -79,22 +89,47 @@ public class BigJukeboxBlock extends BlockWithEntity implements BlockEntityProvi
         var doubleBlockHalf = state.get(HALF);
         var bigJukebox = net.iantheone.jukeboxmod.block.Blocks.BIG_JUKEBOX;
 
-        var dir = (doubleBlockHalf == DoubleBlockHalf.LOWER) ? Direction.UP : Direction.DOWN;
-        var oppositeHalf = (doubleBlockHalf == DoubleBlockHalf.LOWER) ? DoubleBlockHalf.UPPER: DoubleBlockHalf.LOWER;
+        var dir = (doubleBlockHalf == DoubleBlockHalf.UPPER) ? Direction.DOWN : Direction.UP;
+        var oppositeHalf = (doubleBlockHalf == DoubleBlockHalf.UPPER) ? DoubleBlockHalf.LOWER: DoubleBlockHalf.UPPER;
+
+        if (neighborState.isOf(this) && neighborState.get(HALF) == oppositeHalf) {
+            return state.with(POWERED, neighborState.get(POWERED))
+                        .with(HAS_DISCS, neighborState.get(HAS_DISCS));
+        }
 
         if (direction == dir && ((!neighborState.isOf(bigJukebox)) || neighborState.get(HALF) != oppositeHalf)) {
             return Blocks.AIR.getDefaultState();
         }
+
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+    }
+
+    //check for redstone signal
+    @Override
+    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        var dir = (state.get(HALF) == DoubleBlockHalf.UPPER) ? pos.down() : pos.up();
+        boolean bl = true;
+        boolean bl2 = world.isReceivingRedstonePower(pos) || world.isReceivingRedstonePower(dir)? true : (bl = false);
+
+        if (!this.getDefaultState().isOf(sourceBlock) && bl != state.get(POWERED)) {
+            world.setBlockState(pos, state.with(POWERED, bl), Block.NOTIFY_LISTENERS);
+        }
     }
 
     @Nullable
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx){
-        return this.getDefaultState().with(FACING, ctx.getPlayerFacing().getOpposite());
+        return this.getDefaultState().with(FACING, ctx.getPlayerFacing().getOpposite())
+                                     .with(POWERED, ctx.getWorld().isReceivingRedstonePower(ctx.getBlockPos()));
+    }
+
+    @Override
+    public PistonBehavior getPistonBehavior(BlockState state) {
+        return PistonBehavior.DESTROY;
     }
 
     //blockstate stuff
+    //#region
     @Override
     public BlockState rotate(BlockState state, BlockRotation rotation){
         return state.with(FACING, rotation.rotate(state.get(FACING)));
@@ -105,8 +140,9 @@ public class BigJukeboxBlock extends BlockWithEntity implements BlockEntityProvi
     }
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(HALF, FACING, HAS_DISCS);
+        builder.add(HALF, FACING, HAS_DISCS, POWERED);
     }
+    //#endregion
 
     //BLOCK ENTITY//
 

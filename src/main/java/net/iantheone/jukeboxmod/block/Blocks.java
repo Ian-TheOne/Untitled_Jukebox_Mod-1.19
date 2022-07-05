@@ -11,9 +11,16 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import static net.iantheone.jukeboxmod.block.BigJukeboxBlock.POWERED;
+
 public class Blocks {
     public static final Block BIG_JUKEBOX = registerBlock("big_jukebox",
-            new BigJukeboxBlock(FabricBlockSettings.of(Material.WOOD).strength(6f).nonOpaque()), ItemGroup.REDSTONE);
+            new BigJukeboxBlock(FabricBlockSettings
+                    .of(Material.WOOD)
+                    .strength(6f)
+                    .nonOpaque()
+                    .luminance(state -> state.get(POWERED) ? 15 : 0)),
+                    ItemGroup.REDSTONE);
 
     private static Block registerBlock(String name, Block block, ItemGroup group){
         registerBlockItem(name, block, group);

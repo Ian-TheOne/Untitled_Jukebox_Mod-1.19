@@ -2,7 +2,7 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [48, 48],
 	"textures": {
-		"0": "jukeboxmod:block/big_jukebox_empty"
+		"0": "jukeboxmod:block/big_jukebox_off"
 	},
 	"elements": [
 		{

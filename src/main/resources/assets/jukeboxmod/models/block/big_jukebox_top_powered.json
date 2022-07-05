@@ -1,0 +1,50 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
+	"textures": {
+		"0": "jukeboxmod:block/big_jukebox_on",
+		"particle": "jukeboxmod:block/big_jukebox_particles"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 2],
+			"to": [16, 8, 14],
+			"faces": {
+				"east": {"uv": [0, 3, 3, 5], "texture": "#0"},
+				"south": {"uv": [10, 3, 14, 5], "texture": "#0"},
+				"west": {"uv": [7, 3, 10, 5], "texture": "#0"},
+				"up": {"uv": [7, 3, 3, 0], "texture": "#0"}
+			}
+		},
+		{
+			"from": [14, -1, 2],
+			"to": [2, 6, 13],
+			"faces": {
+				"east": {"uv": [5.75, 10.25, 3, 12], "texture": "#0"},
+				"south": {"uv": [0, 9, 3, 10.75], "texture": "#0"},
+				"west": {"uv": [3, 10.25, 5.75, 12], "texture": "#0"},
+				"up": {"uv": [14, 3, 11, 0.25], "texture": "#0"},
+				"down": {"uv": [15, 9.25, 12, 12], "texture": "#0"}
+			}
+		},
+		{
+			"from": [2, -1, 2],
+			"to": [14, 6, 13],
+			"faces": {
+				"east": {"uv": [5.75, 10.25, 3, 12], "texture": "#0"},
+				"south": {"uv": [0, 9, 3, 10.75], "texture": "#0"},
+				"west": {"uv": [3, 10.25, 5.75, 12], "texture": "#0"},
+				"up": {"uv": [14, 3, 11, 0.25], "texture": "#0"},
+				"down": {"uv": [15, 9.25, 12, 12], "texture": "#0"}
+			}
+		},
+		{
+			"name": "glass",
+			"from": [0, 0, 2],
+			"to": [16, 8, 2],
+			"faces": {
+				"north": {"uv": [3, 3, 7, 5], "texture": "#0"}
+			}
+		}
+	]
+}

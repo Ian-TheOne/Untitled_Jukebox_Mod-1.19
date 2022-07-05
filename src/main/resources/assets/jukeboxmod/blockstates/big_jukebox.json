@@ -1,48 +1,93 @@
 {
   "variants": {
-    "facing=north,half=lower": {
+    "facing=north,half=lower,powered=false": {
       "model": "jukeboxmod:block/big_jukebox_bottom"
     },
-    "facing=west,half=lower": {
+    "facing=west,half=lower,powered=false": {
       "model": "jukeboxmod:block/big_jukebox_bottom",
       "y": 270
     },
-    "facing=south,half=lower": {
+    "facing=south,half=lower,powered=false": {
       "model": "jukeboxmod:block/big_jukebox_bottom",
       "y": 180
     },
-    "facing=east,half=lower": {
+    "facing=east,half=lower,powered=false": {
       "model": "jukeboxmod:block/big_jukebox_bottom",
       "y": 90
     },
-    "facing=north,half=upper,has_discs=false": {
+    "facing=north,half=lower,powered=true": {
+      "model": "jukeboxmod:block/big_jukebox_bottom_powered"
+    },
+    "facing=west,half=lower,powered=true": {
+      "model": "jukeboxmod:block/big_jukebox_bottom_powered",
+      "y": 270
+    },
+    "facing=south,half=lower,powered=true": {
+      "model": "jukeboxmod:block/big_jukebox_bottom_powered",
+      "y": 180
+    },
+    "facing=east,half=lower,powered=true": {
+      "model": "jukeboxmod:block/big_jukebox_bottom_powered",
+      "y": 90
+    },
+    "facing=north,half=upper,has_discs=false,powered=false": {
       "model": "jukeboxmod:block/big_jukebox_top"
     },
-    "facing=west,half=upper,has_discs=false": {
+    "facing=west,half=upper,has_discs=false,powered=false": {
       "model": "jukeboxmod:block/big_jukebox_top",
       "y": 270
     },
-    "facing=south,half=upper,has_discs=false": {
+    "facing=south,half=upper,has_discs=false,powered=false": {
       "model": "jukeboxmod:block/big_jukebox_top",
       "y": 180
     },
-    "facing=east,half=upper,has_discs=false": {
+    "facing=east,half=upper,has_discs=false,powered=false": {
       "model": "jukeboxmod:block/big_jukebox_top",
       "y": 90
     },
-    "facing=north,half=upper,has_discs=true": {
+    "facing=north,half=upper,has_discs=false,powered=true": {
+      "model": "jukeboxmod:block/big_jukebox_top_powered"
+    },
+    "facing=west,half=upper,has_discs=false,powered=true": {
+      "model": "jukeboxmod:block/big_jukebox_top_powered",
+      "y": 270
+    },
+    "facing=south,half=upper,has_discs=false,powered=true": {
+      "model": "jukeboxmod:block/big_jukebox_top_powered",
+      "y": 180
+    },
+    "facing=east,half=upper,has_discs=false,powered=true": {
+      "model": "jukeboxmod:block/big_jukebox_top_powered",
+      "y": 90
+    },
+    "facing=north,half=upper,has_discs=true,powered=false": {
       "model": "jukeboxmod:block/big_jukebox_top_filled"
     },
-    "facing=west,half=upper,has_discs=true": {
+    "facing=west,half=upper,has_discs=true,powered=false": {
       "model": "jukeboxmod:block/big_jukebox_top_filled",
       "y": 270
     },
-    "facing=south,half=upper,has_discs=true": {
+    "facing=south,half=upper,has_discs=true,powered=false": {
       "model": "jukeboxmod:block/big_jukebox_top_filled",
       "y": 180
     },
-    "facing=east,half=upper,has_discs=true": {
+    "facing=east,half=upper,has_discs=true,powered=false": {
       "model": "jukeboxmod:block/big_jukebox_top_filled",
+      "y": 90
+    },
+    "facing=north,half=upper,has_discs=true,powered=true": {
+      "model": "jukeboxmod:block/big_jukebox_top_filled_powered"
+    },
+    "facing=west,half=upper,has_discs=true,powered=true": {
+      "model": "jukeboxmod:block/big_jukebox_top_filled_powered",
+      "y": 270
+    },
+    "facing=south,half=upper,has_discs=true,powered=true": {
+      "model": "jukeboxmod:block/big_jukebox_top_filled_powered",
+      "y": 180
+    },
+    "facing=east,half=upper,has_discs=true,powered=true": {
+      "model": "jukeboxmod:block/big_jukebox_top_filled_powered",
       "y": 90
     }
   }
